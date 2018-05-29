@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import org.isegodin.git.tool.App;
+import org.isegodin.git.tool.context.ApplicationContext;
 import org.isegodin.git.tool.data.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class GitToolUiApplication extends Application {
 
         initTray();
 
-        PollingThread pollingThread = new PollingThread(App.eventQueue, events -> {
+        PollingThread pollingThread = new PollingThread(ApplicationContext.eventQueue, events -> {
             String message = events.stream().map(Event::getMessage).collect(Collectors.joining(System.lineSeparator()));
             logger.info("Received events: {}", message);
             showDialog(message);
@@ -64,7 +64,7 @@ public class GitToolUiApplication extends Application {
         PopupMenu popup = new PopupMenu();
         popup.add(exitItem);
 
-        Image trayImage = Toolkit.getDefaultToolkit().getImage(System.class.getResource("/ui/images/tray.png"));
+        Image trayImage = Toolkit.getDefaultToolkit().getImage(System.class.getResource("/ui/images/git-16x16.png"));
         TrayIcon trayIcon = new TrayIcon(trayImage);
         trayIcon.setPopupMenu(popup);
 
