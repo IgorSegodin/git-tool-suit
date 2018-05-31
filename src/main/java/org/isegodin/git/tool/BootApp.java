@@ -8,7 +8,7 @@ import org.eclipse.jgit.transport.OpenSshConfig;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.isegodin.git.tool.context.ApplicationContext;
 import org.isegodin.git.tool.ui.GitToolUiApplication;
-import org.isegodin.git.tool.worker.GitRepositoryPollingThread;
+import org.isegodin.git.tool.concurrent.GitRepositoryPollingThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
