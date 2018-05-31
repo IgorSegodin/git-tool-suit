@@ -72,13 +72,23 @@ public class GitRepositoryPollingThread extends Thread {
 
             lastCommit = headCommit;
 
-            return commits.stream().map(revCommit -> new Event(revCommit.getFullMessage())).collect(Collectors.toList());
+            return commits.stream().map(this::convertCommitToEvent).collect(Collectors.toList());
 
         } catch (Exception e) {
             logger.error("Failed to check events", e);
         }
 
         return Collections.emptyList();
+    }
+
+    private Event convertCommitToEvent(RevCommit commit) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(commit.getFullMessage());
+
+        if (commit.getAuthorIdent() != null) {
+            sb.append(" (").append(commit.getAuthorIdent().getName()).append(")");
+        }
+        return new Event(sb.toString());
     }
 
     private RevCommit getHeadCommit() {
