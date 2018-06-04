@@ -23,12 +23,14 @@ public class GitRepositoryPollingThread extends Thread {
     private final Queue<Event> eventQueue;
 
     private final Git git;
+    private final String branch;
 
     private volatile RevCommit lastCommit;
 
-    public GitRepositoryPollingThread(Queue<Event> eventQueue, Git git) {
+    public GitRepositoryPollingThread(Queue<Event> eventQueue, Git git, String branch) {
         this.eventQueue = eventQueue;
         this.git = git;
+        this.branch = branch;
     }
 
     @Override
@@ -93,7 +95,7 @@ public class GitRepositoryPollingThread extends Thread {
 
     private RevCommit getHeadCommit() {
         try {
-            String branch = "refs/remotes/origin/" + git.getRepository().getBranch();
+            String branch = "refs/remotes/origin/" + this.branch;
             return git.log().add(git.getRepository().resolve(branch)).setMaxCount(1).call().iterator().next();
         } catch (Exception e) {
             throw new RuntimeException(e);

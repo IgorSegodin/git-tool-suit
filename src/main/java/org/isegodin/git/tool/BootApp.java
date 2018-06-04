@@ -23,16 +23,17 @@ public class BootApp {
     private static Logger logger = LoggerFactory.getLogger(App.class);
 
     public void boot(String[] args, File appDir) {
-        Git repository = initRepository(appDir);
+        String repoUrl = System.getProperty("repoUrl");
+        String branch = Optional.ofNullable(System.getProperty("branch")).orElse("master");
 
-        new GitRepositoryPollingThread(ApplicationContext.eventQueue, repository).start();
+        Git repository = initRepository(appDir, repoUrl, branch);
+
+        new GitRepositoryPollingThread(ApplicationContext.eventQueue, repository, branch).start();
 
         Application.launch(GitToolUiApplication.class, args);
     }
 
-    private Git initRepository(final File appDir) {
-        String repoUrl = System.getProperty("repoUrl");
-        String branch = Optional.ofNullable(System.getProperty("branch")).orElse("master");
+    private Git initRepository(final File appDir, String repoUrl, String branch) {
         String projectName = repoUrl.substring(repoUrl.lastIndexOf("/") + 1, repoUrl.lastIndexOf(".git"));
 
         File workDir = new File(Optional.ofNullable(System.getProperty("workingFolder"))
@@ -65,10 +66,10 @@ public class BootApp {
                         .setBranch(branch)
                         .call();
 
-                logger.info("Repository \"{}\" cloned to \"{}\"", repoUrl, projectDir);
+                logger.info("Repository \"{}\" branch \"{}\" cloned to \"{}\"", repoUrl, branch, projectDir);
             } else {
                 git = Git.open(projectDir);
-                logger.info("Repository opened \"{}\"", projectDir);
+                logger.info("Repository branch \"{}\" opened \"{}\"", branch, projectDir);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
